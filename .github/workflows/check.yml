@@ -1,18 +1,29 @@
-name: "Run all crane checks"
+name: "Run a flake check on all systems"
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-  push:
-    branches:
-      - 'main'
-      - 'ci*'
+  workflow_call:
+    inputs:
+      check:
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            system: x86_64-linux
+          - runner: ubuntu-24.04-arm
+            system: aarch64-linux
+          - runner: macos15-intel
+            system: x86_64-darwin
+          - runner: macos15
+            system: aarch64-darwin
+    runs-on: ${{ matrix.runner }}
+        
     steps:
       - uses: actions/checkout@v5
 
@@ -25,5 +36,5 @@ jobs:
           name: wawwior
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix flake check -L .#
+      - run: nix build \#checks.${{ matrix.system }}.${{ inputs.check }}
     

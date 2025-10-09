@@ -1,0 +1,17 @@
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - 'main'
+      - 'ci*'
+
+permissions:
+  contents: read
+
+jobs:
+  clippy:
+    uses: ./.github/workflows/check.yml
+    with:
+      check: deny
+    
