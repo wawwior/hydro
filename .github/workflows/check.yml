@@ -1,4 +1,4 @@
-name: "Run a flake check on all systems"
+name: reusable flake check
 on:
   workflow_call:
     inputs:

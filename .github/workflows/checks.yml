@@ -1,3 +1,4 @@
+name: flake checks
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -10,8 +11,16 @@ permissions:
   contents: read
 
 jobs:
-  clippy:
+  fmt:
+    uses: ./.github/workflows/check.yml
+    with:
+      check: fmt
+  deny:
     uses: ./.github/workflows/check.yml
     with:
       check: deny
+  clippy:
+    uses: ./.github/workflows/check.yml
+    with:
+      check: clippy
     
