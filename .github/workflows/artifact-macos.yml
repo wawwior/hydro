@@ -1,4 +1,4 @@
-name: reusable flake build (linux)
+name: reusable flake build (macos)
 on:
   workflow_call:
     inputs:
