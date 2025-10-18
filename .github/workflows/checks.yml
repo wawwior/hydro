@@ -33,14 +33,28 @@ jobs:
   build-linux:
     uses: ./.github/workflows/check-linux.yml
     with:
-      check: crane-package
+      check: default
     secrets:
       cachix_auth_token: ${{ secrets.CACHIX_AUTH_TOKEN }}
     needs: [fmt, deny]
   build-macos:
     uses: ./.github/workflows/check-macos.yml
     with:
-      check: crane-package
+      check: default
     secrets:
       cachix_auth_token: ${{ secrets.CACHIX_AUTH_TOKEN }}
     needs: [fmt, deny]
+  tarball-linux:
+    uses: ./.github/workflows/check-linux.yml
+    with:
+      check: tarball
+    secrets:
+      cachix_auth_token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+    needs: [build-linux]
+  tarball-macos:
+    uses: ./.github/workflows/check-macos.yml
+    with:
+      check: tarball
+    secrets:
+      cachix_auth_token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+    needs: [build-macos]
