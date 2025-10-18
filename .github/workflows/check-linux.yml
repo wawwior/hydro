@@ -3,7 +3,8 @@ on:
   workflow_call:
     inputs:
       check:
-        required: true
+        default: default
+        required: false
         type: string
     secrets:
       cachix_auth_token:

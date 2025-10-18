@@ -11,50 +11,42 @@ permissions:
   contents: read
 
 jobs:
-  fmt:
+  check-fmt:
     uses: ./.github/workflows/check-agnostic.yml
     with:
       check: fmt
     secrets:
       cachix_auth_token: ${{ secrets.CACHIX_AUTH_TOKEN }}
-  deny:
+  check-deny:
     uses: ./.github/workflows/check-agnostic.yml
     with:
       check: deny
     secrets:
       cachix_auth_token: ${{ secrets.CACHIX_AUTH_TOKEN }}
-  clippy:
+  check-clippy:
     uses: ./.github/workflows/check-agnostic.yml
     with:
       check: clippy
     secrets:
       cachix_auth_token: ${{ secrets.CACHIX_AUTH_TOKEN }}
-    needs: [fmt, deny]
-  build-linux:
+    needs: [check-fmt, check-deny]
+  check-default-linux:
     uses: ./.github/workflows/check-linux.yml
-    with:
-      check: default
     secrets:
       cachix_auth_token: ${{ secrets.CACHIX_AUTH_TOKEN }}
-    needs: [fmt, deny]
-  build-macos:
+    needs: [check-fmt, check-deny]
+  check-default-macos:
     uses: ./.github/workflows/check-macos.yml
-    with:
-      check: default
     secrets:
       cachix_auth_token: ${{ secrets.CACHIX_AUTH_TOKEN }}
-    needs: [fmt, deny]
-  tarball-linux:
-    uses: ./.github/workflows/check-linux.yml
-    with:
-      check: tarball
+    needs: [check-fmt, check-deny]
+  artifact-linux:
+    uses: ./.github/workflows/artifact-linux.yml
     secrets:
       cachix_auth_token: ${{ secrets.CACHIX_AUTH_TOKEN }}
-    needs: [build-linux]
-  tarball-macos:
-    uses: ./.github/workflows/check-macos.yml
-    with:
-      check: tarball
+    needs: [check-default-linux]
+  artifact-macos:
+    uses: ./.github/workflows/artifact-macos.yml
     secrets:
       cachix_auth_token: ${{ secrets.CACHIX_AUTH_TOKEN }}
-    needs: [build-macos]
+    needs: [check-default-macos]
