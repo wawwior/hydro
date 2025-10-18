@@ -1,0 +1,38 @@
+name: reusable flake check (linux)
+on:
+  workflow_call:
+    inputs:
+      check:
+        required: true
+        type: string
+    secrets:
+      cachix_auth_token:
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            system: x86_64-linux
+          - runner: ubuntu-24.04-arm
+            system: aarch64-linux
+    runs-on: ${{ matrix.runner }}
+        
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: cachix/cachix-action@v16
+        with:
+          name: wawwior
+          authToken: ${{ secrets.cachix_auth_token }}
+
+      - run: nix build .\#checks.${{ matrix.system }}.${{ inputs.check }}

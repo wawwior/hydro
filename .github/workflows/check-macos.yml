@@ -1,10 +1,13 @@
-name: reusable flake check
+name: reusable flake check (macos)
 on:
   workflow_call:
     inputs:
       check:
         required: true
         type: string
+    secrets:
+      cachix_auth_token:
+        required: false
 
 permissions:
   contents: read
@@ -14,10 +17,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - runner: ubuntu-24.04
-            system: x86_64-linux
-          - runner: ubuntu-24.04-arm
-            system: aarch64-linux
           - runner: macos-15-intel
             system: x86_64-darwin
           - runner: macos-15
@@ -34,7 +33,6 @@ jobs:
       - uses: cachix/cachix-action@v16
         with:
           name: wawwior
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          authToken: ${{ secrets.cachix_auth_token }}
 
-      - run: nix build \#checks.${{ matrix.system }}.${{ inputs.check }}
-    
+      - run: nix build .\#checks.${{ matrix.system }}.${{ inputs.check }}
